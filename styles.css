@@ -1,0 +1,144 @@
+body{
+    padding: 0;
+    margin: 0;
+    background-color: #798155;
+    overflow-x: hidden;
+}
+header{
+    height: 80px;
+    background-color: rgb(231, 227, 227);
+    text-align: center;
+    top: 0;
+    overflow: hidden;
+}
+#sitename{
+    margin:auto;
+    font-size: 40px;
+    padding-top: 20px;
+    color: rgb(0, 0, 0);
+}
+#checkoutBtn{
+    padding: 10px;
+    margin-top: -55px;
+    margin-right: 20px;
+    font-size: 30px;
+    float: right;
+    cursor: pointer;
+}
+
+main{
+    margin-bottom: 100px;
+}
+
+#mainProductContainer{
+    display: flex;
+    width: 100%;
+    margin-top: 3%;
+    flex-wrap: wrap;
+}
+
+#sideContainer{
+    display: block;
+    float: left;
+    width:20%; 
+    height: 100%;
+    position: relative;
+    overflow-x: hidden;
+    margin-left: 2%;
+    margin-bottom: 4%;
+    background-color: rgb(204, 202, 202);
+    border-radius: 10px;
+    box-shadow: 0 1px 5px 0 black;
+    padding-bottom: 2%;
+}
+
+
+/* css for p text in sidebar */
+#sideContainer p{
+    padding-left: 15%;
+    font-size: 25px;
+    font-weight: bold;
+    margin-bottom: 2%;
+}
+
+/* css for input buttons in sidebar */
+#sideContainer input{
+    vertical-align: middle;
+    position: relative;
+    margin-bottom: -11%;
+    margin-left: 15%; 
+}
+
+/* css for labels in sidebar */
+#sideContainer label{
+    margin-left: auto;
+    display: block;
+    font-size: 18px;
+    padding-left: 22%;
+}
+
+
+#productContainer{
+    width: 72%;
+    display: block;
+    float: left;
+    margin: auto;
+    margin-left: 4%;
+    margin-top: 0;
+    background-color: rgb(111, 143, 111);
+    border-radius: 10px;
+    box-shadow: 0 1px 5px 0 black;
+}
+#productCard{
+    float: left;
+    display: table-cell;
+    margin: 26px;
+    padding-bottom: 15px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    max-width: 300px;
+    background-color: rgb(204, 202, 202);
+    width: 20%;
+    height: 10%;
+    text-align: center;
+    transition: transform .5s;
+    border-radius: 10%;
+    box-shadow: 0 4px 8px 0 black;
+    color: black;
+    text-decoration: none;
+}
+
+/* css for displaying product image */
+#productCard img {
+    width: 80%;
+}
+
+/* color changes on hover */
+#productCard:hover {
+    color: #ffffff;
+    background-color: rgb(70, 46, 46);
+    transform: scale(1.05);
+    /* 105% zoom */
+    box-shadow: 0 4px 8px 0 black;
+    /*black shadow on hover*/
+}
+#productCard button{
+    margin-bottom: 12px;
+}
+
+#cartCheckout h1{
+    font-size: 35px;
+    text-align: center;
+}
+
+#cartContainer{
+    display: block;
+    width: 100%;
+    margin-left: 4%;
+    overflow: hidden;
+}
+
+#checkoutContainer{
+    text-align: center;
+}
+
+

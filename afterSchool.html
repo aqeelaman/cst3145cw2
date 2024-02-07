@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>After School Classes</title>
+
+    <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+        integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous" />
+    <script src="products.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="app">
+        <header>
+            <h1 v-text="sitename" id="sitename"></h1>
+            <p v-if='cartItemCount==""' disabled="disabled" id="checkoutBtn" style="opacity: 0.5;">
+                {{cartItemCount}}
+                <span class="fas fa-cart-plus"></span>
+            </p>
+            <p v-else v-on:click="showCheckout" id="checkoutBtn">
+                {{cartItemCount}}
+                <span class="fas fa-cart-plus"></span>
+            </p>
+        </header>
+
+        <main>
+
+            <div v-if="showProduct">
+                <div id="mainProductContainer">
+
+                    <div id="sideContainer">
+                        <p>Search:</p>
+                        <input id="searchbar" type="search" placeholder="Search" v-model="searchResult">
+                        <br>
+
+                        <p>Sort By:</p>
+                        <input type="radio" id="class" value="class" v-model="sortby">
+                        <label for="class">Class</label>
+                        <input type="radio" id="location" value="location" v-model="sortby">
+                        <label for="location">Location</label>
+                        <input type="radio" id="price" value="price" v-model="sortby">
+                        <label for="price">Price</label>
+                        <input type="radio" id="availability" value="availability" v-model="sortby">
+                        <label for="class">Availability</label>
+                        <br>
+
+                        <p>Order By:</p>
+                        <input type="radio" id="ascending" value="ascending" v-model="orderby">
+                        <label for="ascending">Ascending</label>
+                        <input type="radio" id="descending" value="descending" v-model="orderby">
+                        <label for="descending">Descending</label>
+                    </div>
+
+                    <div id="productContainer">
+                        <div id="productCard" v-for="product in sortedProducts">
+                            <figure>
+                                <img v-bind:src="product.image">
+                            </figure>
+                            <h2 v-text="product.title"></h2>
+                            <p>Location: {{product.location}}</p>
+                            <p>Price: AED{{product.price}}</p>
+                            <p>Availability: {{product.availableInventory}}</p>
+                            <button v-on:click="addToCart(product)" v-if="canAddToCart(product)">
+                                Add To Cart</button>
+                            <button disabled='disabled' v-else>
+                                Add To Cart</button>
+                            <br>
+                            <span v-if="product.cartInventory === cartCount(product.id)"> All Out!</span>
+                            <span v-else-if="product.availableInventory < 5 "> Only {{product.availableInventory}}
+                                left!</span>
+                            <span v-else>Buy Now!</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div v-else-if="cartItemCount>0" id="cartCheckout">
+                <h1>Cart</h1>
+                <div id="cartContainer">
+                    <div id="cartCardContainer" v-for="id in cart">
+                        <div id="productCard" v-for="product in products" v-if="product.id==id">
+                            <figure>
+                                <img v-bind:src="product.image">
+                            </figure>
+                            <h2 v-text="product.title"></h2>
+                            <p>Location: {{product.location}}</p>
+                            <p>Price: AED{{product.price}}</p>
+                            <button v-on:click="removeFromCart(product)">
+                                Remove Item</button>
+                            <br>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div id="checkoutContainer">
+                    <h1>Checkout</h1>
+
+                    <p>
+                        <strong>Name:</strong>
+                        <input v-model.trim="order.name" />
+                    </p>
+                    <p>
+                        <strong>Phone:</strong>
+                        <input type="number" v-model="order.phone" />
+                    </p>
+                    <br><br><br>
+
+
+
+                    <h1>Order Information</h1>
+                    <p>Name: {{order.name}}</p>
+                    <p>Phone: {{order.phone}}</p>
+
+                    <button v-if="validateInput" v-on:click="submitForm">
+                        Place Order</button>
+                    <button v-else disabled='disabled'>
+                        Place Order</button>
+                </div>
+            </div>
+
+            <div v-else style="text-align: center;">
+                <h1 style="font-size: 35px;">Cart</h1>
+                <p>No items left in cart!</p>
+            </div>
+
+        </main>
+    </div>
+
+
+
+    <script type="text/javascript">
+        var webstore = new Vue({
+            el: '#app', // <=== Don't forget this comma
+            data: {
+                showProduct: true,
+                sitename: "After School Classes",
+                products: products,
+                cart: [],
+                searchResult: "",
+                sortby: "",
+                orderby: "ascending",
+                order: {
+                    name: "",
+                    phone: "",
+                },
+            },
+            methods: {
+                addToCart(product) {
+                    this.cart.push(product.id);
+                    product.availableInventory--;
+                },
+                showCheckout() {
+                    this.showProduct = this.showProduct ? false : true;
+                },
+                canAddToCart(product) {
+                    return product.cartInventory > this.cartCount(product.id);
+                },
+                cartCount(id) {
+                    let count = 0;
+                    for (let i = 0; i < this.cart.length; i++) {
+                        if (this.cart[i] == id) {
+                            count++;
+                        }
+                    }
+                    return count;
+                },
+                removeFromCart(product) {
+                    let index = this.cart.indexOf(product.id);
+                    if (index > -1) {
+                        this.cart.splice(index, 1);
+                    }
+                    product.availableInventory++;
+                },
+                submitForm() {
+                    alert('Order submitted!')
+                }
+
+            },
+            computed: {
+                cartItemCount: function () {
+                    return this.cart.length || "";
+                },
+                sortedProducts: function () {
+                    let productsArray = this.products.slice(0);
+
+
+                    productsArray = productsArray.filter((product) =>
+                        product.title.toLowerCase().includes(this.searchResult.toLowerCase().trim())
+                        || product.location.toLowerCase().includes(this.searchResult.toLowerCase().trim())
+                    );
+
+                    if (this.sortby == "price" && this.orderby == "ascending") {
+                        function compare(a, b) {
+                            if (a.price > b.price) return 1;
+                            if (a.price < b.price) return -1;
+                            return 0;
+                        }
+                        return productsArray.sort(compare);
+                    }
+
+                    if (this.sortby == "price" && this.orderby == "descending") {
+                        function compare(a, b) {
+                            if (a.price < b.price) return 1;
+                            if (a.price > b.price) return -1;
+                            return 0;
+                        }
+                        return productsArray.sort(compare);
+                    }
+
+
+
+                    if (this.sortby == "class" && this.orderby == "ascending") {
+                        function compare(a, b) {
+                            if (a.title > b.title) return 1;
+                            if (a.title < b.title) return -1;
+                            return 0;
+                        }
+                        return productsArray.sort(compare);
+                    }
+
+                    if (this.sortby == "class" && this.orderby == "descending") {
+                        function compare(a, b) {
+                            if (a.title < b.title) return 1;
+                            if (a.title > b.title) return -1;
+                            return 0;
+                        }
+                        return productsArray.sort(compare);
+                    }
+
+
+                    if (this.sortby == "availability" && this.orderby == "ascending") {
+                        function compare(a, b) {
+                            if (a.availableInventory > b.availableInventory) return 1;
+                            if (a.availableInventory < b.availableInventory) return -1;
+                            return 0;
+                        }
+                        return productsArray.sort(compare);
+                    }
+
+                    if (this.sortby == "availability" && this.orderby == "descending") {
+                        function compare(a, b) {
+                            if (a.availableInventory < b.availableInventory) return 1;
+                            if (a.availableInventory > b.availableInventory) return -1;
+                            return 0;
+                        }
+                        return productsArray.sort(compare);
+                    }
+
+
+
+                    if (this.sortby == "location" && this.orderby == "ascending") {
+                        function compare(a, b) {
+                            if (a.location > b.location) return 1;
+                            if (a.location < b.location) return -1;
+                            return 0;
+                        }
+                        return productsArray.sort(compare);
+                    }
+
+                    if (this.sortby == "location" && this.orderby == "descending") {
+                        function compare(a, b) {
+                            if (a.location < b.location) return 1;
+                            if (a.location > b.location) return -1;
+                            return 0;
+                        }
+                        return productsArray.sort(compare);
+                    }
+
+                    return productsArray;
+
+                },
+                validateInput() {
+
+                    var regName = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/g;
+                    var regNumber = /^[0-9]*$/g;
+
+                    //console.log("name:" + regName.test(this.order.name));
+                    //console.log("number:" + regNumber.test(this.order.phone) + " number:" + this.order.phone)
+
+                    if (this.order.name != "" && this.order.phone != "") {
+                        console.log("check1");
+                        if (regName.test(this.order.name) && regNumber.test(this.order.phone)) {
+                            return true;
+                        }
+                    };
+                    return false;
+                }
+
+            }
+        });
+    </script>
+</body>
+
+</html>
