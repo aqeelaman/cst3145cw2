@@ -145,15 +145,15 @@
                 orderby: "ascending",
                 order: {
                     name: "",
-                    phone: "",
+                    phone: ""
                 },
             },
-            created: function(){
+            created: function () {
                 console.log("Requesting data from server");
                 fetch('http://localhost:3000/collection/lessons').then(
-                    function(response){
+                    function (response) {
                         response.json().then(
-                            function(json){
+                            function (json) {
                                 webstore.products = json;
                                 console.log(json)
                             }
@@ -189,7 +189,65 @@
                     product.availableInventory++;
                 },
                 submitForm() {
-                    alert('Order submitted!')
+                    order = {
+                        name: this.order.name,
+                        phone: this.order.phone,
+                        cart: this.cart
+                    }
+                    fetch('http://localhost:3000/collection/orders', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(order),
+                    }).then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to place order');
+                        }
+                        return response.json();
+                    }).then(data => {
+                        console.log('Order placed successfully:', data[0]._id);
+                        this.updateLessons();
+                        // Handle success (e.g., show confirmation to user)
+                    }).catch(error => {
+                        console.error('Error placing order:', error);
+                        // Handle error (e.g., show error message to user)
+                    });
+                },
+                updateLessons() {
+                    let lessonObjectID;
+                    for (lesson in this.cart) {
+                        console.log(this.cart[lesson]);
+                        for (product in this.products){
+                            // console.log(this.products[product].id +""+   this.cart[lesson]);
+                            if(this.cart[lesson] == this.products[product].id){
+                                lessonObjectID = this.products[product]._id;
+                                console.log(this.products[product].id +""+   this.cart[lesson]);
+                                console.log(lessonObjectID);
+                            }
+                        }
+                        fetch('http://localhost:3000/collection/lessons/'+lessonObjectID, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            }
+                        }).then(response => {
+                            console.log(response);
+                            if (!response.ok) {
+                                throw new Error('Failed to place order');
+                            }
+                            return response.json();
+                        })
+                        // .then(data => {
+                        //     console.log('Order placed successfully:', data[0]._id);
+
+                        //     // Handle success (e.g., show confirmation to user)
+                        // })
+                        .catch(error => {
+                            console.error('', error);
+                            // Handle error (e.g., show error message to user)
+                        });
+                    }
                 }
 
             },
