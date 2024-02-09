@@ -8,7 +8,7 @@
     <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
         integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous" />
-    <script src="products.js"></script>
+    <!-- <script src="products.js"></script> -->
     <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -134,11 +134,11 @@
 
     <script type="text/javascript">
         var webstore = new Vue({
-            el: '#app', // <=== Don't forget this comma
+            el: '#app',
             data: {
                 showProduct: true,
                 sitename: "After School Classes",
-                products: products,
+                products: [],
                 cart: [],
                 searchResult: "",
                 sortby: "",
@@ -147,6 +147,19 @@
                     name: "",
                     phone: "",
                 },
+            },
+            created: function(){
+                console.log("Requesting data from server");
+                fetch('http://localhost:3000/collection/lessons').then(
+                    function(response){
+                        response.json().then(
+                            function(json){
+                                webstore.products = json;
+                                console.log(json)
+                            }
+                        )
+                    }
+                )
             },
             methods: {
                 addToCart(product) {
