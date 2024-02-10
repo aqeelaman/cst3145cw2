@@ -32,6 +32,7 @@ MongoClient.connect('mongodb+srv://aa5226:tiger@gettingstarted.tciwwxu.mongodb.n
     db = client.db('afterschool')
 })
 
+//logger middleware
 app.use((req, res, next) => {
     console.log(req.method + req.url)
     next();
@@ -87,6 +88,16 @@ app.put('/collection/:collectionName/:id', (req, res, next) => {
     )
 })
 
+//search
+app.get('/search', (req, res, next) => {
+    req.collection.find(
+        {
+            $or: [{ "title": new RegExp(req.query.q, 'i') }, { "location": { '$regex': req.query.q, '$options': 'i' } }]
+        }).toArray((e, result) => {
+            if (e) return next(e)
+            res.send(result)
+        })
+})
 
 //run app
 app.listen(3000, () => {
