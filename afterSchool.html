@@ -208,9 +208,12 @@
                     }).then(data => {
                         console.log('Order placed successfully:', data[0]._id);
                         this.updateLessons();
+                        alert("Order placed successfully: " + data[0]._id)
+                        this.cart = [];
+                        location.reload();
                         // Handle success (e.g., show confirmation to user)
                     }).catch(error => {
-                        console.error('Error placing order:', error);
+                        console.error('Error placing order: ', error);
                         // Handle error (e.g., show error message to user)
                     });
                 },
@@ -266,10 +269,8 @@
                         }).then(data => {
                             console.log(data);
                             productsArray = data;
-                            // Handle success (e.g., show confirmation to user)
                         }).catch(error => {
-                            console.error('Error placing order:', error);
-                            // Handle error (e.g., show error message to user)
+                            console.error('Error searching lessons:', error);
                         });
                     }
                     else {
@@ -376,8 +377,7 @@
                         }
                     };
                     return false;
-                }
-
+                } 
             }
         });
     </script>
