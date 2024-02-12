@@ -150,7 +150,7 @@
             },
             created: function () {
                 console.log("Requesting data from server");
-                fetch('http://localhost:3000/collection/lessons').then(
+                fetch('http://afterschoolapp1-env.eba-ph66xqpq.eu-west-2.elasticbeanstalk.com/collection/lessons').then(
                     function (response) {
                         console.log(response)
                         response.json().then(
@@ -195,7 +195,7 @@
                         phone: this.order.phone,
                         cart: this.cart
                     }
-                    fetch('http://localhost:3000/collection/orders', {
+                    fetch('http://afterschoolapp1-env.eba-ph66xqpq.eu-west-2.elasticbeanstalk.com/collection/orders', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -228,7 +228,7 @@
                                 console.log(lessonObjectID);
                             }
                         }
-                        fetch('http://localhost:3000/collection/lessons/' + lessonObjectID, {
+                        fetch('http://afterschoolapp1-env.eba-ph66xqpq.eu-west-2.elasticbeanstalk.com/collection/lessons/' + lessonObjectID, {
                             method: 'PUT',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -246,7 +246,7 @@
                     }
                 },
                 searchResults(){
-                    fetch('http://localhost:3000/collection/lessons/search?q=' + this.searchInput, {
+                    fetch('http://afterschoolapp1-env.eba-ph66xqpq.eu-west-2.elasticbeanstalk.com/collection/lessons/search?q=' + this.searchInput, {
                             method: 'GET',
                             headers: {
                                 'Content-Type': 'application/json',
