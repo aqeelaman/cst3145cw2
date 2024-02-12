@@ -2,6 +2,7 @@ const express = require('express');
 const MongoClient = require('mongodb').MongoClient;
 const path = require("path");
 
+//create express js instance
 const app = express();
 //config express.js
 app.use(express.json())
@@ -14,6 +15,7 @@ app.use((req, res, next) => {
     next();
 })
 
+//static file 
 var staticPath = path.resolve(__dirname, "static");
 app.use(express.static(staticPath));
 var publicPath = path.resolve(__dirname, "public");
@@ -27,6 +29,7 @@ app.use(function (req, res, next) {
     next();
 });
 
+//mongodb database connection
 let db;
 MongoClient.connect('mongodb+srv://aa5226:tiger@gettingstarted.tciwwxu.mongodb.net', (err, client) => {
     db = client.db('afterschool')
@@ -57,7 +60,7 @@ app.get('/collection/:collectionName', (req, res, next) => {
     })
 })
 
-//adding post
+//post to add new order
 app.post('/collection/:collectionName', (req, res, next) => {
     req.collection.insert(req.body, (e, results) => {
         if (e) return next(e)
@@ -74,7 +77,7 @@ app.get('/collection/:collectionName/:id', (req, res, next) => {
     })
 })
 
-//update
+//update inventory
 app.put('/collection/:collectionName/:id', (req, res, next) => {
     req.collection.update(
         { _id: new ObjectID(req.params.id) },
@@ -100,6 +103,7 @@ app.get('/search', (req, res, next) => {
 })
 
 //run app
-app.listen(3000, () => {
+const port = process.env.PORT || 3000
+app.listen(port, () => {
     console.log('Express.js server running at localhost:3000')
 })
