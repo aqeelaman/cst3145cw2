@@ -15,20 +15,6 @@ app.use((req, res, next) => {
     next();
 })
 
-//static file 
-var staticPath = path.resolve(__dirname, "static");
-app.use(express.static(staticPath));
-var publicPath = path.resolve(__dirname, "public");
-var imagePath = path.resolve(__dirname, "images");
-
-app.use('/public', express.static(publicPath));
-app.use('/images', express.static(imagePath));
-app.use(function (req, res, next) {
-    res.writeHead(200, { "Content-Type": "text/plain" });
-    res.end("Looks like you didn't find a static file.")
-    next();
-});
-
 //mongodb database connection
 let db;
 MongoClient.connect('mongodb+srv://aa5226:tiger@gettingstarted.tciwwxu.mongodb.net', (err, client) => {
@@ -46,7 +32,7 @@ app.get('/', (req, res, next) => {
     res.send('Select a collection, e.g., /collection/messages')
 })
 
-//get collection name
+//collection name
 app.param('collectionName', (req, res, next, collectionName) => {
     req.collection = db.collection(collectionName)
     return next()
@@ -66,6 +52,20 @@ app.post('/collection/:collectionName', (req, res, next) => {
         if (e) return next(e)
         res.send(results.ops)
     })
+})
+
+//search
+app.get('/collection/:collectionName/search', (req, res, next) => {
+    
+        req.collection.find(
+        {
+            $or: [{ "title": new RegExp(req.query.q, 'i') }, { "location": { '$regex': req.query.q, '$options': 'i' } }]
+        }).toArray((e, result) => {
+            if (e) return next(e)
+            //console.log(result)
+            res.send(result)
+        })
+    
 })
 
 //retrieve a product with ObjectID
@@ -91,16 +91,19 @@ app.put('/collection/:collectionName/:id', (req, res, next) => {
     )
 })
 
-//search
-app.get('/search', (req, res, next) => {
-    req.collection.find(
-        {
-            $or: [{ "title": new RegExp(req.query.q, 'i') }, { "location": { '$regex': req.query.q, '$options': 'i' } }]
-        }).toArray((e, result) => {
-            if (e) return next(e)
-            res.send(result)
-        })
-})
+// static file 
+var staticPath = path.resolve(__dirname, "static");
+app.use(express.static(staticPath));
+var publicPath = path.resolve(__dirname, "public");
+var imagePath = path.resolve(__dirname, "images");
+
+app.use('/public', express.static(publicPath));
+app.use('/images', express.static(imagePath));
+app.use(function (req, res, next) {
+    res.writeHead(200, { "Content-Type": "text/plain" });
+    res.end("Looks like you didn't find a static file.")
+    next();
+});
 
 //run app
 const port = process.env.PORT || 3000
