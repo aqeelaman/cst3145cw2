@@ -33,7 +33,7 @@
 
                     <div id="sideContainer">
                         <p>Search:</p>
-                        <input id="searchbar" type="search" placeholder="Search" v-model="searchResult">
+                        <input id="searchbar" type="search" placeholder="Search" v-model="searchInput" @input="searchResults">
                         <br>
 
                         <p>Sort By:</p>
@@ -140,7 +140,7 @@
                 sitename: "After School Classes",
                 products: [],
                 cart: [],
-                searchResult: "",
+                searchInput: "",
                 sortby: "",
                 orderby: "ascending",
                 order: {
@@ -152,12 +152,13 @@
                 console.log("Requesting data from server");
                 fetch('http://localhost:3000/collection/lessons').then(
                     function (response) {
+                        console.log(response)
                         response.json().then(
                             function (json) {
                                 webstore.products = json;
                                 console.log(json)
                             }
-                        )
+                        )   
                     }
                 )
             },
@@ -211,10 +212,8 @@
                         alert("Order placed successfully: " + data[0]._id)
                         this.cart = [];
                         location.reload();
-                        // Handle success (e.g., show confirmation to user)
                     }).catch(error => {
                         console.error('Error placing order: ', error);
-                        // Handle error (e.g., show error message to user)
                     });
                 },
                 updateLessons() {
@@ -245,18 +244,9 @@
                             // Handle error (e.g., show error message to user)
                         });
                     }
-                }
-
-            },
-            computed: {
-                cartItemCount: function () {
-                    return this.cart.length || "";
                 },
-                sortedProducts: function () {
-                    let productsArray = this.products.slice(0);
-
-                    if (this.searchResult != "") {
-                        fetch('http://localhost:3000/collection/lessons/search?q=' + this.searchResult, {
+                searchResults(){
+                    fetch('http://localhost:3000/collection/lessons/search?q=' + this.searchInput, {
                             method: 'GET',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -268,18 +258,23 @@
                             return response.json();
                         }).then(data => {
                             console.log(data);
-                            productsArray = data;
+                            this.products = data;
                         }).catch(error => {
                             console.error('Error searching lessons:', error);
                         });
-                    }
-                    else {
-                        productsArray = this.products.slice(0);
-                    }
+                }
+
+            },
+            computed: {
+                cartItemCount: function () {
+                    return this.cart.length || "";
+                },
+                sortedProducts: function () {
+                    let productsArray = this.products.slice(0);
 
                     // productsArray = productsArray.filter((product) =>
-                    //     product.title.toLowerCase().includes(this.searchResult.toLowerCase().trim())
-                    //     || product.location.toLowerCase().includes(this.searchResult.toLowerCase().trim())
+                    //     product.title.toLowerCase().includes(this.searchInput.toLowerCase().trim())
+                    //     || product.location.toLowerCase().includes(this.searchInput.toLowerCase().trim())
                     // );
 
                     if (this.sortby == "price" && this.orderby == "ascending") {
@@ -359,6 +354,7 @@
                         return productsArray.sort(compare);
                     }
 
+                    console.log(productsArray);
                     return productsArray;
 
                 },
